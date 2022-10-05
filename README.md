@@ -2,6 +2,11 @@
 A mini demo application written in Python
 
 
+![alt text](https://github.com/YannickBihege/FlaskPetApplication/blob/main/1.jpeg?raw=true)
+
+
+
+
 
 # Steps necessary for the creation of the project
 
