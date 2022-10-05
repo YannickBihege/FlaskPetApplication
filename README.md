@@ -2,6 +2,9 @@
 A mini demo application written in Python
 
 
+![alt text](https://github.com/YannickBihege/FlaskPetApplication#:~:text=Commit%20time-,1.jpeg,-Upload%20cat%20image)
+
+
 
 # Steps necessary for the creation of the project
 
