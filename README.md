@@ -10,11 +10,11 @@ A mini demo application written in Python
 
 # Steps necessary for the creation of the project
 
-pip3 install virtualenv
-python3 -m pip install --upgrade pip
-python3 -m venv virtualEnv
-source virtualEnv/bin/activate
-python3 -m pip install -r requirements.txt
+- pip3 install virtualenv
+- python3 -m pip install --upgrade pip
+- python3 -m venv virtualEnv
+- source virtualEnv/bin/activate
+- python3 -m pip install -r requirements.txt
 
 # Installation of the requirements
 
