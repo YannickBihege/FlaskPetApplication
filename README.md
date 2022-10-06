@@ -18,8 +18,8 @@ A mini demo application written in Python
 
 # Installation of the requirements
 
-'''python -m pip freeze > requirements.txt'''
-'''python -m pip install -r requirements.txt'''
+- '''python -m pip freeze > requirements.txt'''
+- '''python -m pip install -r requirements.txt'''
 
 # Steps necessary for starting the application
 
