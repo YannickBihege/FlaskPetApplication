@@ -1,24 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="utf-8">
-    <title>About - Paws Rescue Center</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
-</head>
+{% block title %} {{pet["name"]}}'s Details {% endblock %}
 
-<body>
-    {% for pet in pets %}
-    {% if petId == pet["id"] %}
-
-    <img src="{{url_for('static', filename = pet["id"]|string+".jpg")}}" height="100" style="float: left;"></td>
-
-    <h1 class="title"> {{ pet["name"] }}</h1>
-    <p>{{ pet["age"] }}</p>
-    <p>{{ pet["bio"] }}</p>
-    {% endif %}
-    {% endfor %}
-
-</body>
-
-</html>
+{% block content %}
+<div style="float:left; border-style:double;">
+    <img src="{{url_for('static', filename = pet["id"]|string+".jpg")}}" height="350">
+</div>
+<div style="float:left; margin:10px;">
+    <h1 class="title">{{ pet["name"] }}</h1>
+    <p><b>Age: &nbsp;</b> {{pet["age"]}}</p>
+    <p><b>Bio: &nbsp;</b> {{pet["bio"]}}</p>
+</div>
+{% endblock %}
