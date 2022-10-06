@@ -93,17 +93,12 @@ def pet_details(pet_id):
 def signup():
     """View function for Showing Details of Each Pet."""
     form = SignUpForm()
+    if form.validate_on_submit():
+        new_user = {"id": len(users)+1, "full_name": form.full_name.data,
+                    "email": form.email.data, "password": form.password.data}
+        users.append(new_user)
+        return render_template("signup.html", message="Successfully signed up")
     return render_template("signup.html", form=form)
-
-
-def add_user(fullName, email, password):
-    # TODO
-    id_user = len(users)+1
-    users['id'] = id_user
-    users['full_name'] = fullName
-    users['email'] = email
-    users['password'] = password
-    pass
 
 
 if __name__ == "__main__":
