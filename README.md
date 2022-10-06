@@ -21,3 +21,7 @@ python3 -m pip install -r requirements.txt
 '''python -m pip install -r requirements.txt'''
 
 # Steps necessary for starting the application
+
+- Installation of the libraries
+- Activation of the env
+- Execute app.py
