@@ -26,5 +26,10 @@ def about():
     return render_template("about.html",  pets=Pets)
 
 
+@app.route("/details/<int:petId>")
+def details(petId):
+    """View function for details."""
+    return render_template("details.html", pets = Pets , petId= petId )
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3000)
