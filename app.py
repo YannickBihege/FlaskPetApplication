@@ -1,4 +1,6 @@
 """Flask Application for Paws Rescue Center."""
+from forms import SignUpForm
+from flask import Flask, render_template, abort
 from flask import Flask, render_template, abort, request
 
 app = Flask(__name__)
@@ -34,6 +36,78 @@ def pet_details(pet_id):
     if pet is None:
         abort(404, description="No Pet was Found with the given ID")
     return render_template("details.html", pet=pet)
+
+
+@app.route("/signup", methods=["POST", "GET"])
+def signup():
+    """View function for Showing Details of Each Pet."""
+    form = SignUpForm()
+    return render_template("signup.html", form=form)
+
+
+"""Flask Application for Paws Rescue Center."""
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'dfewfew123213rwdsgert34tgfd1234trgf'
+
+"""Information regarding the Pets in the System."""
+pets = [
+    {"id": 1, "name": "Nelly", "age": "5 weeks",
+        "bio": "I am a tiny kitten rescued by the good people at Paws Rescue Center. I love squeaky toys and cuddles."},
+    {"id": 2, "name": "Yuki", "age": "8 months",
+     "bio": "I am a handsome gentle-cat. I like to dress up in bow ties."},
+    {"id": 3, "name": "Basker", "age": "1 year",
+     "bio": "I love barking. But, I love my friends more."},
+    {"id": 4, "name": "Mr. Furrkins", "age": "5 years", "bio": "Probably napping."},
+]
+
+"""Information regarding the Users in the System."""
+users = [
+    {"id": 1, "full_name": "Pet Rescue Team",
+        "email": "team@pawsrescue.co", "password": "adminpass"},
+]
+
+
+@app.route("/")
+def homepage():
+    """View function for Home Page."""
+    return render_template("home.html", pets=pets)
+
+
+@app.route("/about")
+def about():
+    """View function for About Page."""
+    return render_template("about.html")
+
+
+@app.route("/details/<int:pet_id>")
+def pet_details(pet_id):
+    """View function for Showing Details of Each Pet."""
+    pet = next((pet for pet in pets if pet["id"] == pet_id), None)
+    if pet is None:
+        abort(404, description="No Pet was Found with the given ID")
+    return render_template("details.html", pet=pet)
+
+
+@app.route("/signup", methods=["POST", "GET"])
+def signup():
+    """View function for Showing Details of Each Pet."""
+    form = SignUpForm()
+    return render_template("signup.html", form=form)
+
+
+def add_user(fullName, email, password):
+    # TODO
+    id_user = len(users)+1
+    users['id'] = id_user
+    users['full_name'] = fullName
+    users['email'] = email
+    users['password'] = password
+    pass
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=3000)
 
 
 if __name__ == "__main__":

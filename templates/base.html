@@ -3,26 +3,22 @@
 
 <head>
     <meta charset="utf-8">
+    <title>{% block title %} {% endblock %} - Paws Rescue Center</title>
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
-
-    <title>{% block title %}
-        <!-- Placeholder for Title -->
-        {% endblock %}</title>
-
-    {% block head %}
-    <!-- Placeholder for Other Imports -->
-    {% endblock %}
-
 </head>
 
 <body>
-    <div id="header"></div>
-    <div id="content">
-        {% block content %}
-        <!-- Placeholder for Page Content -->
-        {% endblock %}
+    <div>
+        <ul style="list-style-type: none;float: right;font-size: large;">
+            <li style="display:inline"><a href="{{url_for('homepage')}}">Home</a></li>
+            <li style="display:inline"><a href="{{url_for('about')}}">About</a></li>
+            <li style="display:inline"><a href="{{url_for('signup')}}">Sign Up</a></li>
+        </ul>
     </div>
-
+    <h1 id="title"> {% block heading %} {% endblock %} </h1>
+    <div id="content">
+        {% block content %} {% endblock %}
+    </div>
 </body>
 
 </html>

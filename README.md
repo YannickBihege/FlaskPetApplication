@@ -1,12 +1,12 @@
 # FlaskPetApplication
+
 A mini demo application written in Python
 
+- Login page
+- Sign Up
+- Query to database
 
 ![alt text](https://github.com/YannickBihege/FlaskPetApplication/blob/main/1.jpeg?raw=true)
-
-
-
-
 
 # Steps necessary for the creation of the project
 
@@ -17,6 +17,7 @@ source virtualEnv/bin/activate
 python3 -m pip install -r requirements.txt
 
 # Installation of the requirements
+
 '''python -m pip freeze > requirements.txt'''
 '''python -m pip install -r requirements.txt'''
 
