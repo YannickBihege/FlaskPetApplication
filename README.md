@@ -4,6 +4,7 @@ A mini demo application written in Python
 
 - Login page
 - Sign Up
+- Session
 - Query to database
 
 ![alt text](https://github.com/YannickBihege/FlaskPetApplication/blob/main/1.jpeg?raw=true)
