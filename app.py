@@ -2,10 +2,14 @@
 from forms import SignUpForm, LoginForm
 from flask import Flask, render_template, abort, request
 from flask import session, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
-# csrf
+# csrf Token :) Please do not do share this in production
 app.config['SECRET_KEY'] = 'dfewfew123213rwdsgert34tgfd1234trgf'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///paws.db'
+db = SQLAlchemy(app)
 
 
 """Information regarding the Pets in the System."""
@@ -24,6 +28,27 @@ Users = [
     {"id": 1, "full_name": "Pet Rescue Team",
         "email": "team@pawsrescue.co", "password": "adminpass"},
 ]
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    full_name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    #
+    rescuedPets = db.relationship('Pet')
+
+
+class Pet(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    name = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    age = db.Column(db.Integer,   nullable=False)
+    bio = db.Column(db.String, nullable=False)
+    rescuerId = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
+
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route("/")
