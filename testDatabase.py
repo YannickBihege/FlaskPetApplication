@@ -12,17 +12,20 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
 
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
-archie = User(email="archie.andrews@email.com", password="football4life")
-veronica = User(email="veronica.lodge@email.com", password="fashiondiva")
+    archie = User(email="archie.andrews@email.com", password="football4life")
+    veronica = User(email="veronica.lodge@email.com", password="fashiondiva")
 
-db.session.add(archie)
-db.session.add(veronica)
+    db.session.add(archie)
+    db.session.add(veronica)
 
-try:
-    db.session.commit()
-except Exception as e:
-    db.session.rollback()
-finally:
-    db.session.close()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+    finally:
+        db.session.close()
+
+    print(User.query.all())
