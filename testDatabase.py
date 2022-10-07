@@ -2,9 +2,8 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
 # set the config variable SQLALCHEMY_DATABASE_URI to point to this file.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///paws.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -72,5 +71,7 @@ with app.app_context():
         db.session.rollback()
     finally:
         db.session.close()
-
+    # filter_by() is called and the password is given as a keyword argument. followd by .first() or all()
+    # filter takes an expression as parameter
+    # query .get takes the primary key as argument only
     print(Pet.query.all())

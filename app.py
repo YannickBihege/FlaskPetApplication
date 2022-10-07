@@ -1,5 +1,5 @@
 """Flask Application for Paws Rescue Center."""
-from forms import SignUpForm, LoginForm
+from forms import EditPetForm, SignUpForm, LoginForm
 from flask import Flask, render_template, abort, request
 from flask import session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +13,7 @@ db = SQLAlchemy(app)
 
 
 """Information regarding the Pets in the System."""
+'''
 Pets = [
     {"id": 1, "name": "Nelly", "age": "5 weeks",
         "bio": "I am a tiny kitten rescued by the good people at Paws Rescue Center. I love squeaky toys and cuddles."},
@@ -22,37 +23,35 @@ Pets = [
      "bio": "I love barking. But, I love my friends more."},
     {"id": 4, "name": "Mr. Furrkins", "age": "5 years", "bio": "Probably napping."},
 ]
+'''
+
 
 """Information regarding the Users in the System."""
+'''
 Users = [
     {"id": 1, "full_name": "Pet Rescue Team",
         "email": "team@pawsrescue.co", "password": "adminpass"},
 ]
-
-
-"""Model for Pets."""
-
-
-class Pet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
-    age = db.Column(db.String)
-    bio = db.Column(db.String)
-    posted_by = db.Column(db.String, db.ForeignKey('user.id'))
-
-
-"""Model for Users."""
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String)
-    email = db.Column(db.String, unique=True)
-    password = db.Column(db.String)
-    pets = db.relationship('Pet', backref='user')
-
+'''
 
 with app.app_context():
+
+    """Model for Pets."""
+    class Pet(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String, unique=True)
+        age = db.Column(db.String)
+        bio = db.Column(db.String)
+        posted_by = db.Column(db.String, db.ForeignKey('user.id'))
+
+    """Model for Users."""
+    class User(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        full_name = db.Column(db.String)
+        email = db.Column(db.String, unique=True)
+        password = db.Column(db.String)
+        pets = db.relationship('Pet', backref='user')
+
     db.create_all()
     ''' Initialize the database'''
     # Create "team" user and add it to session
@@ -79,6 +78,7 @@ with app.app_context():
     # Commit changes in the session
     try:
         db.session.commit()
+        print('Pets and Users objects commited')
     except Exception as e:
         db.session.rollback()
     finally:
@@ -88,22 +88,48 @@ with app.app_context():
 @app.route("/")
 def homepage():
     """View function for Home Page."""
-    return render_template("home.html", pets=Pets)
+    pets = Pet.query.all() # get from database
+    return render_template("home.html", pets=pets)
 
 
 @app.route("/about")
 def about():
     """View function for About Page."""
-    return render_template("about.html",  pets=Pets)
+    return render_template("about.html")
 
 
 @app.route("/details/<int:pet_id>")
 def pet_details(pet_id):
     """View function for Showing Details of Each Pet."""
-    pet = next((pet for pet in Pets if pet["id"] == pet_id), None)
+    #pet = next((pet for pet in Pets if pet["id"] == pet_id), None)
+    form = EditPetForm()
+    pet = Pet.query.get(pet_id)
     if pet is None:
         abort(404, description="No Pet was Found with the given ID")
-    return render_template("details.html", pet=pet)
+    if form.validate_on_submit():
+        pet.name= form.name.data
+        pet.age = form.age.data
+        pet.bio = form.bio.data
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return render_template("details.html" , pet = pet, form = form)
+
+    return render_template("details.html", pet=pet, form = form)
+
+
+@app.route("/delete/<int:pet_id>")
+def delete_pet(pet_id):
+    pet = Pet.query.get(pet_id)
+    if pet is None: 
+        abort(404, description="No Pet was Found with the given ID")
+    db.session.delete(pet)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+    return redirect(url_for('homepage', _scheme='https', _external=True))
 
 
 @app.route("/signup", methods=["POST", "GET"])
@@ -132,21 +158,15 @@ def signup():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # deprecated datastructure user = next((user for user in users if user["email"] == form.email.data and user["password"] == form.password.data), None)
-        try:
-            user = User.query.filter_by(
-                email=form.email.data, password=form.password.data).first()
-            if user is None:
-                return render_template("login.html", form=form, message="Wrong Credentials. Please Try Again.")
-            else:
-                session['user'] = user.id
-                return render_template("login.html", message="Successfully Logged In!")
-        except Exception as e:
-            db.session.rollback()
-            return render_template("login.html", form=form, message="Database exception.")
-        finally:
-            db.session.close()
-    return render_template("login.html", form=form)
+        # user = next((user for user in users if user["email"] == form.email.data and user["password"] == form.password.data), None)
+        user = User.query.filter_by(email = form.email.data, password = form.password.data).first()
+        if user is None:
+            return render_template("login.html", form = form, message = "Wrong Credentials. Please Try Again.")
+        else:
+            # session['user'] = user
+            session['user'] = user.id
+            return render_template("login.html", message = "Successfully Logged In!")
+    return render_template("login.html", form = form)
 
 
 @app.route("/logout")
