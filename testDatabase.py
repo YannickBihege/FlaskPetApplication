@@ -15,7 +15,6 @@ db = SQLAlchemy(app)
 # Step create a model
 """Model for Pets."""
 
-
 class Pet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
@@ -25,7 +24,6 @@ class Pet(db.Model):
 
 
 """Model for Users."""
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
