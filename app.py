@@ -35,8 +35,7 @@ class User(db.Model):
     full_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, primary_key=True, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    #
-    rescuedPets = db.relationship('Pet')
+    pets = db.relationship('Pet', backref = 'user')
 
 
 class Pet(db.Model):
@@ -44,7 +43,9 @@ class Pet(db.Model):
     name = db.Column(db.String, primary_key=True, unique=True, nullable=False)
     age = db.Column(db.Integer,   nullable=False)
     bio = db.Column(db.String, nullable=False)
-    rescuerId = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
+    posted_by =  db.Column(db.String, db.ForeignKey('user.id'))
+
+
 
 
 with app.app_context():
@@ -74,31 +75,42 @@ def pet_details(pet_id):
 
 @app.route("/signup", methods=["POST", "GET"])
 def signup():
-    """View function for Showing Details of Each Pet."""
+    """View function for Showing Details of Each Pet.""" 
     form = SignUpForm()
     if form.validate_on_submit():
-        new_user = {"id": len(Users)+1, "full_name": form.full_name.data,
-                    "email": form.email.data, "password": form.password.data}
-        Users.append(new_user)
-        return render_template("signup.html", message="Successfully signed up")
-    return render_template("signup.html", form=form)
+        # new_user = {"id": len(users)+1, "full_name": form.full_name.data, "email": form.email.data, "password": form.password.data}
+        # users.append(new_user)
+        new_user = User(full_name = form.full_name.data, email = form.email.data, password = form.password.data)
+        db.session.add(new_user)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            return render_template("signup.html", form = form, message = "This Email already exists in the system! Please Log in instead.")
+        finally:
+            db.session.close()
+        return render_template("signup.html", message = "Successfully signed up")
+    return render_template("signup.html", form = form)
 
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = next((user for user in Users if user["email"] ==
-                    form.email.data and user["password"] == form.password.data), None)
-        if user is None:
-            return render_template("login.html", form=form, message="Wrong credentials. Please try again.")
-
-        else:
-            # add user to session
-            session['user'] = user
-            # render telplate
-            return render_template("login.html", form=form, message="Successfully logged in")
-    return render_template("login.html", form=form)
+        try:
+            user = User.query.filter_by(email= form.email.data, password = form.password.data).first()
+            if user is None:
+                return render_template("login.html", form = form, message = "Wrong Credentials. Please Try Again.")
+            else:
+                session['user'] = user.id
+                return render_template("login.html", message = "Successfully Logged In!")
+        except Exception as e: 
+            db.session.rollback()
+            return render_template("login.html", form = form, message = "Database exception.")
+        finally:
+            db.session.close()
+    return render_template("login.html", form = form)
 
 
 @app.route("/logout")
